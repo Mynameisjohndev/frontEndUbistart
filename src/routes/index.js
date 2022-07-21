@@ -6,17 +6,19 @@ import Signup from '../pages/signup';
 import Signin from '../pages/signin';
 import Todos from '../pages/todos';
 import NotFound from '../pages/notfound';
+import { useContextApp } from '../context';
 
 const AppRoutes = () => {
-  const { user } = true;
-
+  const { user } = useContextApp();
+  console.log(user);
+  let logado = user;
   const PrivateRoute = ({ redirectTo }) => {
-    const isAuthenticated = localStorage.getItem('token') !== null && user;
+    const isAuthenticated = logado;
     return isAuthenticated ? <Outlet/> : <Navigate to={redirectTo} />;
   };
 
   const Public = ({ redirectTo }) => {
-    const isAuthenticated = localStorage.getItem('token') !== null && user;
+    const isAuthenticated = user;
     return !isAuthenticated ? <Outlet/> : <Navigate to={redirectTo} />;
   };
 
@@ -26,7 +28,7 @@ const AppRoutes = () => {
         <Route element={<PrivateRoute redirectTo="/"/>}>
             <Route path="/todos"element={<Todos />}/>
         </Route>
-        <Route element={<Public redirectTo="/dashboard"/>}>
+        <Route element={<Public redirectTo="/todos"/>}>
           <Route path="/" element={<Signin />} />
           <Route path="/signup" element={<Signup />} />
         </Route>
