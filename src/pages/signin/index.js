@@ -3,6 +3,8 @@ import Button from "../../components/Button";
 import Input from "../../components/Input";
 import { Background, Form, PressText, Title } from "../../global/stlyes";
 import { useNavigate } from 'react-router-dom';
+import api from "../../services/api";
+import { ToastContainer, toast } from 'react-toastify';
 
 function Signin() {
 
@@ -12,6 +14,20 @@ function Signin() {
 
   const navigateTo = () => {
     navigation("/signup")
+  }
+
+  const signin = async() => {
+    api.get(`/user/session/${email}/${password}`)
+    .then(()=>{
+      toast.success("Logado com sucesso!", {
+        theme: "colored"
+      })
+    })
+    .catch(()=>{
+      toast.error("Houve um erro tente novamente dentro de instantes!", {
+        theme: "colored"
+      })
+    })
   }
 
   return (
@@ -30,7 +46,7 @@ function Signin() {
         />
         <Button
           title="Entrar"
-          action={()=>console.log("testew")}
+          action={()=>signin()}
         />
         <PressText onClick={()=>navigateTo()}>Registrar-se</PressText>
       </Form>
