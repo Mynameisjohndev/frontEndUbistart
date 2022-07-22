@@ -25,3 +25,9 @@ export const Title = styled.h1`
   color: #141a82;
 `
 
+export const PressText = styled.h1`
+  font-size: 22px;
+  color: #141a82;
+  cursor: pointer;
+`
+
