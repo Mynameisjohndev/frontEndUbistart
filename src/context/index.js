@@ -8,7 +8,7 @@ function ContextProvider({ children }){
     <Context.Provider value={{ user, novo: "teste" }}>
       {children}
     </Context.Provider>
-    )
+  )
 }
 
 function useContextApp (){
