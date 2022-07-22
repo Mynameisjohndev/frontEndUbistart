@@ -3,6 +3,8 @@ import Button from "../../components/Button";
 import Input from "../../components/Input";
 import { Background, Form, PressText, Title } from "../../global/stlyes";
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import api from "../../services/api";
 
 function Signup() {
 
@@ -13,6 +15,21 @@ function Signup() {
   const navigateTo = () => {
     navigation("/")
   }
+
+  const signup = async() => {
+    api.post('/user/signup',{email, password})
+    .then(()=>{
+      toast.success("Registrado com sucesso!", {
+        theme: "colored"
+      })
+    })
+    .catch(()=>{
+      toast.error("Houve um erro tente novamente dentro de instantes!", {
+        theme: "colored"
+      })
+    })
+  }
+
 
   return (
     <Background>
@@ -29,8 +46,8 @@ function Signup() {
           setText={setPassword}
         />
         <Button
-          title="Entrar"
-          action={()=>console.log("testew")}
+          title="Cadastrar"
+          action={()=>signup()}
         />
         <PressText onClick={()=>navigateTo()}>Já possui conta? Entrar</PressText>
       </Form>
