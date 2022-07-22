@@ -10,10 +10,10 @@ import { useContextApp } from '../context';
 
 const AppRoutes = () => {
   const { user } = useContextApp();
-  console.log(user);
+
   let logado = user;
   const PrivateRoute = ({ redirectTo }) => {
-    const isAuthenticated = logado;
+    const isAuthenticated = user;
     return isAuthenticated ? <Outlet/> : <Navigate to={redirectTo} />;
   };
 
