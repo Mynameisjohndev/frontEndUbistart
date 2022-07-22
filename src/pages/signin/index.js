@@ -4,7 +4,7 @@ import Input from "../../components/Input";
 import { Background, Form, PressText, Title } from "../../global/stlyes";
 import { useNavigate } from 'react-router-dom';
 import api from "../../services/api";
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 
 function Signin() {
 
@@ -38,11 +38,13 @@ function Signin() {
           placeholder="E-mail: "
           text={email}
           setText={setEmail}
+          type="email"
         />
         <Input
           placeholder="Senha: "
           text={password}
           setText={setPassword}
+          type="password"
         />
         <Button
           title="Entrar"

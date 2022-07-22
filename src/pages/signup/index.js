@@ -39,11 +39,13 @@ function Signup() {
           placeholder="E-mail: "
           text={email}
           setText={setEmail}
+          type="email"
         />
         <Input
           placeholder="Senha: "
           text={password}
           setText={setPassword}
+          type="password"
         />
         <Button
           title="Cadastrar"
