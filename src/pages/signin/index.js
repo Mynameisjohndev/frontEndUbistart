@@ -5,12 +5,14 @@ import { Background, Form, PressText, Title } from "../../global/stlyes";
 import { useNavigate } from 'react-router-dom';
 import api from "../../services/api";
 import { toast } from 'react-toastify';
+import { useContextApp } from '../../context';
 
 function Signin() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigation = useNavigate();
+  const { setUser } = useContextApp()
 
   const navigateTo = () => {
     navigation("/signup")
@@ -18,10 +20,12 @@ function Signin() {
 
   const signin = async() => {
     api.get(`/user/session/${email}/${password}`)
-    .then(()=>{
+    .then((res)=>{
+      localStorage.setItem('token', JSON.stringify(res.data));
+      setUser(res.data)
       toast.success("Logado com sucesso!", {
         theme: "colored"
-      })
+      });
     })
     .catch(()=>{
       toast.error("Houve um erro tente novamente dentro de instantes!", {
