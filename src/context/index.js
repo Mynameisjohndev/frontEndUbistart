@@ -14,7 +14,7 @@ function ContextProvider({ children }){
 
   useEffect(()=>{
     if(user){
-      // api.defaults.headers.authorization = `Bearer : ${user.token}`;
+      api.defaults.headers.authorization = `Bearer ${user.token}`;
     }
   },[user])
 

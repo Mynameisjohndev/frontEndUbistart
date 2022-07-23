@@ -13,7 +13,7 @@ export const Container = styled.div`
 export const Content = styled.div`
   width: 80%;
   height: 100%;
-  background-color: #181fad;
+  background-color: #74747c;
   border-radius: 10px;
   padding: 10px;
   display: flex;
@@ -30,4 +30,29 @@ export const Status = styled.span`
   display: flex;
   align-items: center;
   justify-content: center;
+`
+export const Opiton = styled.div`
+  display: flex;
+  flex-direction: row;
+  margin-left: 60%;
+  width: 100%;
+`
+
+export const Edit = styled.h5`
+  color: #00684a;
+  width: 20%;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+`
+export const End = styled.h5`
+  color: #FF744F;
+  width: 20%;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 `

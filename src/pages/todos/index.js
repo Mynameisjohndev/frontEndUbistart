@@ -13,80 +13,93 @@ function Todo() {
   const [deadlineTodo, setDeadlineTodo] = useState();
   const [openTodos, setOpenTodos] = useState([]);
   const [closedTodos, setClosedTodos] = useState([]);
+  const [todos, setTodos] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [edit, setEdit] = useState();
+  const [end, setEnd] = useState(false);
   const { user } = useContextApp()
 
   const createTodo = () => {
-    const token = user.token;
-    api.post("/todo/create",
-      {
-        owner: user.email,
-        description,
-        deadlineTodo
-        },
+      api.post("/todo/create",
         {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          }
-        }
-      ).then(()=>{
-        toast.success("Tarefa criada com sucesso",{
-          theme: "colored"
-        });
-      })
-      .catch(()=>{
-        toast.error("Tarefa não foi criada!",{
-          theme: "colored"
-        });
-      })
-    
+          owner: user.email,
+          description,
+          deadlineTodo
+          },
+        ).then(()=>{
+          toast.success("Tarefa criada com sucesso",{
+            theme: "colored"
+          });
+          loadTodos();
+        })
+        .catch(()=>{
+          toast.error("Tarefa não foi criada!",{
+            theme: "colored"
+          });
+        })
+  }
+
+  const editTodo = () => {
+    console.log(edit._id)
+    api.patch(`/todo/edit/${edit._id}`,{
+      deadlineTodo,
+      description
+    })
+    .then(()=>{
+      toast.success("Tarefa editada com sucesso",{
+        theme: "colored"
+      });
+      loadTodos();
+    })
+    .catch(()=>{
+      toast.error("Tarefa não foi editada!",{
+        theme: "colored"
+      });
+    })
   }
 
   function validTypeTodo(allTodos){
     let open = [];
     let close = [];
-    allTodos.data.map((item) => {
+    allTodos.map((item) => {
       if(item.endTodo){
         close.push(item);
       }else{
         open.push(item);
       }
     })
+    setLoading(false);
     setOpenTodos(open)
     setClosedTodos(close)
   }
 
   function loadTodos(){
     if(user.admin){
-      api.get(`/todo/list/true/${user.id}`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${user.email}`,
-        }
-      })
+       api.get(`/todo/list/true/${user.id}`,
+      )
       .then((res)=>{
-        validTypeTodo(res);
-      })
-    } else {
-      api.get(`/todo/list/false/${user.email}`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${user.token}`,
-        }
-      })
-      .then((res)=>{
-        validTypeTodo(res);
+        setTodos(res.data);
+        setLoading(true);
       })
     }
+    return api.get(`/todo/list/false/${user.email}`,
+      )
+      .then((res)=>{
+        setTodos(res.data);
+        setLoading(true);
+      })
   }
 
   useEffect(()=>{
-    if(user){
-      loadTodos();
+    if(loading === true){
+      validTypeTodo(todos)
     }
-  },[user]);
+  },[loading, todos]);
+
+  useEffect(()=>{
+      loadTodos();
+  
+  },[loadTodos]);
 
   return (
     <Background style={{alignItems: "flex-start"}}>
@@ -102,16 +115,39 @@ function Todo() {
             />
           <Button 
             style={{width: 120}} 
-            title="Adicionar"
-            action={createTodo}
+            title={edit ? "Salvar" : "Adicionar"}
+            action={edit ? editTodo : createTodo}
+            />
+            <Button 
+            style={{width: 120}} 
+            title="estado"
+            action={()=>console.log(edit)}
             />
         </Form>
         <Row>
           <TodoList>
-            {openTodos.map((item, index)=> <TodoItem data={item} key={index} /> )}
+            {openTodos && openTodos.map((item, index)=> 
+            <TodoItem 
+              data={item} 
+              key={index} 
+              setEdit={setEdit}
+              endAction={setEnd}
+              setDeadlineTodo={setDeadlineTodo}
+              setDescription={setDescription}
+            /> 
+            )}
           </TodoList>
           <TodoList>
-            {closedTodos.map((item, index)=> <TodoItem data={item} key={index} /> )}
+            {closedTodos && closedTodos.map((item, index)=> 
+              <TodoItem 
+                data={item}
+                key={index} 
+                setEdit={setEdit}
+                endAction={setEnd}
+                setDeadlineTodo={setDeadlineTodo}
+                setDescription={setDescription}
+              /> 
+            )}
           </TodoList>
         </Row>
       </Container>
