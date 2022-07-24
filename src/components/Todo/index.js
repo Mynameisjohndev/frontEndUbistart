@@ -39,7 +39,7 @@ endAction,
       <Description>Descrição: {data.description}</Description>
       <Description>Criado em: {formatDate(data.createdAt)}</Description>
       <Description>Entregar em: {formatDate(data.deadlineTodo)}</Description>
-      {isAdmin && (
+      {isAdmin === true && (
         <Description>Responsável: {data.owner}</Description>
       )}
       {validDate(data.deadlineTodo) === true ? (
@@ -49,7 +49,7 @@ endAction,
       )}
       <Opiton>
         <Edit onClick={()=>editItem(data)}  >Editar</Edit>      
-        <End onClick={()=>endAction(true)}>Finalizar</End>   
+        <End onClick={()=>endAction(data)}>Finalizar</End>   
       </Opiton>
       </Content>
     </Container>

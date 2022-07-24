@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Button from "../../components/Button";
 import { Background } from "../../global/stlyes";
-import { Select, Container, Form, TodoList, Row } from "./styles";
+import { Select, Container, Form, TodoList, Row, Logout } from "./styles";
 import api from "../../services/api";
 import { toast } from "react-toastify";
 import { useContextApp } from '../../context';
@@ -17,7 +17,7 @@ function Todo() {
   const [loading, setLoading] = useState(false);
   const [edit, setEdit] = useState();
   const [end, setEnd] = useState(false);
-  const { user } = useContextApp()
+  const { user, setUser } = useContextApp()
 
   const createTodo = () => {
       api.post("/todo/create",
@@ -33,14 +33,13 @@ function Todo() {
           loadTodos();
         })
         .catch(()=>{
-          toast.error("Tarefa não foi criada!",{
+          toast.error("Não foi possível criar a tarefa!",{
             theme: "colored"
           });
         })
   }
 
   const editTodo = () => {
-    console.log(edit._id)
     api.patch(`/todo/edit/${edit._id}`,{
       deadlineTodo,
       description
@@ -52,10 +51,27 @@ function Todo() {
       loadTodos();
     })
     .catch(()=>{
-      toast.error("Tarefa não foi editada!",{
+      toast.error("Não foi possível editar a tarefa!",{
         theme: "colored"
       });
     })
+  }
+  const endTodo = () => {
+    api.patch(`/todo/end/${end._id}`,{
+      endTodo: new Date()
+    })
+    .then(()=>{
+      toast.success("Tarefa finalizada com sucesso",{
+        theme: "colored"
+      });
+      loadTodos();
+    })
+    .catch(()=>{
+      toast.error("Não foi possível finalizar a tarefa!",{
+        theme: "colored"
+      });
+    })
+    setEnd();
   }
 
   function validTypeTodo(allTodos){
@@ -73,21 +89,28 @@ function Todo() {
     setClosedTodos(close)
   }
 
-  function loadTodos(){
-    if(user.admin){
+
+  const loadTodos = useCallback(() =>{
+    if(user.admin === "true"){
+      console.log("teste")
        api.get(`/todo/list/true/${user.id}`,
-      )
-      .then((res)=>{
-        setTodos(res.data);
-        setLoading(true);
-      })
-    }
-    return api.get(`/todo/list/false/${user.email}`,
-      )
-      .then((res)=>{
-        setTodos(res.data);
-        setLoading(true);
-      })
+     )
+     .then((res)=>{
+       setTodos(res.data);
+       setLoading(true);
+     })
+   }
+   return api.get(`/todo/list/false/${user.email}`,
+     )
+     .then((res)=>{
+       setTodos(res.data);
+       setLoading(true);
+     })
+  },[user.admin, user.email, user.id])
+
+  function logoutUser(){
+    localStorage.removeItem("token");
+    setUser();
   }
 
   useEffect(()=>{
@@ -98,12 +121,20 @@ function Todo() {
 
   useEffect(()=>{
       loadTodos();
-  
   },[loadTodos]);
+
+  useEffect(()=>{
+    if(end){
+      endTodo();
+    }
+  },[end, endTodo]);
+
+
 
   return (
     <Background style={{alignItems: "flex-start"}}>
       <Container>
+        <Logout onClick={()=>logoutUser()}>Sair</Logout>
         <Form>
           <Select
             value={description}
@@ -118,11 +149,6 @@ function Todo() {
             title={edit ? "Salvar" : "Adicionar"}
             action={edit ? editTodo : createTodo}
             />
-            <Button 
-            style={{width: 120}} 
-            title="estado"
-            action={()=>console.log(edit)}
-            />
         </Form>
         <Row>
           <TodoList>
@@ -134,6 +160,7 @@ function Todo() {
               endAction={setEnd}
               setDeadlineTodo={setDeadlineTodo}
               setDescription={setDescription}
+              isAdmin={user.admin === "true" ? true : false}
             /> 
             )}
           </TodoList>
@@ -146,6 +173,7 @@ function Todo() {
                 endAction={setEnd}
                 setDeadlineTodo={setDeadlineTodo}
                 setDescription={setDescription}
+                isAdmin={user.admin === "true" ? true : false}
               /> 
             )}
           </TodoList>

@@ -43,4 +43,10 @@ export const TodoList = styled.div`
   border-radius: 4px;
   overflow:auto; 
 `
+export const Logout = styled.h4`
+  color: #c1c4ff;
+  align-self: flex-end;
+  margin-right: 10%;
+  cursor: pointer;
+`
 
